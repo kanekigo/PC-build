@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pro Computers — Admin</title>
+<style>
+  :root{--bg:#131826;--panel:#1a2133;--panel2:#222b42;--line:#333f5e;--text:#eaf0ff;--muted:#a1adcb;--glow:#8f7dff;--ink:#0b0e17;--bad:#ff6b6b}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:400 15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+  .wrap{max-width:1000px;margin:0 auto;padding:24px 16px 80px}
+  h1{font-size:1.6rem;margin:0}
+  h2{font-size:1.2rem;margin:0}
+  a{color:inherit}
+  button{cursor:pointer;font:inherit}
+  .btn{background:var(--glow);color:var(--ink);border:0;border-radius:6px;padding:9px 16px;font-weight:700}
+  .btn.ghost{background:transparent;color:var(--text);border:1.5px solid var(--line)}
+  .btn.danger{background:var(--bad);color:#2b0a0a}
+  .btn.sm{padding:5px 10px;font-size:.85rem}
+  input,select,textarea{background:var(--panel2);border:1.5px solid var(--line);border-radius:6px;color:var(--text);padding:9px 10px;font:inherit;width:100%}
+  label{display:block;font-size:.85rem;font-weight:600;margin:10px 0 4px}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:20px;margin-top:16px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+  .err{color:var(--bad);font-size:.88rem;min-height:1.2em;margin-top:8px}
+  table{width:100%;border-collapse:collapse;font-size:.9rem}
+  th,td{text-align:left;padding:8px 6px;border-top:1px solid var(--line);vertical-align:top}
+  .tabs{display:flex;gap:8px;margin:20px 0}
+  .tabs button{background:transparent;border:1.5px solid var(--line);color:var(--muted);border-radius:6px;padding:8px 16px;font-weight:700}
+  .tabs button.on{border-color:var(--glow);color:var(--text)}
+  .tags{display:flex;gap:12px;flex-wrap:wrap;margin:8px 0}
+  .tags label{display:flex;align-items:center;gap:6px;font-weight:500;margin:0}
+  .ocard{border-top:1px solid var(--line);padding:14px 0}
+  .muted{color:var(--muted)}
+  [hidden]{display:none!important}
+  #loginView{max-width:360px;margin:80px auto 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div id="loginView">
+    <h1>Pro Computers — Admin</h1>
+    <p class="muted" style="margin-top:6px">Sign in with the admin account you created in Firebase.</p>
+    <form id="loginForm" class="panel">
+      <label for="email">Email</label>
+      <input id="email" type="email" autocomplete="username" required>
+      <label for="pass">Password</label>
+      <input id="pass" type="password" autocomplete="current-password" required>
+      <p class="err" id="loginErr"></p>
+      <button class="btn" type="submit" style="width:100%;margin-top:6px">Sign in</button>
+    </form>
+  </div>
+
+  <div id="appView" hidden>
+    <div class="row" style="justify-content:space-between">
+      <h1>Pro Computers — Admin</h1>
+      <div class="row"><span class="muted" id="whoami"></span><button class="btn ghost sm" id="logoutBtn" type="button">Sign out</button></div>
+    </div>
+    <div class="tabs">
+      <button class="on" data-tab="products" type="button">Products</button>
+      <button data-tab="orders" type="button">Orders</button>
+    </div>
+
+    <section id="tabProducts">
+      <div class="row" style="justify-content:space-between">
+        <h2>Products <span class="muted" id="pCount"></span></h2>
+        <button class="btn sm" id="newProductBtn" type="button">+ Add product</button>
+      </div>
+      <div class="panel" id="productForm" hidden></div>
+      <div class="panel"><table><thead><tr><th>Name</th><th>Tier</th><th>Price</th><th></th></tr></thead><tbody id="productRows"></tbody></table></div>
+    </section>
+
+    <section id="tabOrders" hidden>
+      <h2>Orders <span class="muted" id="oCount"></span></h2>
+      <div id="orderList"></div>
+    </section>
+  </div>
+
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+  import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, query, orderBy, updateDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCDJ4yy3oeTnnMOybqm3eBSDchCgaX6xm8",
+    authDomain: "pro-computers-store.firebaseapp.com",
+    projectId: "pro-computers-store",
+    storageBucket: "pro-computers-store.firebasestorage.app",
+    messagingSenderId: "861952923258",
+    appId: "1:861952923258:web:adaa96b3ffef6b64228dc3"
+  };
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const $ = s => document.querySelector(s);
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const money = n => '\u20B9' + Math.round(n || 0).toLocaleString('en-IN');
+
+  /* ---------- login ---------- */
+  $('#loginForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    $('#loginErr').textContent = '';
+    try {
+      await signInWithEmailAndPassword(auth, $('#email').value.trim(), $('#pass').value);
+    } catch (err) {
+      $('#loginErr').textContent = 'Sign-in failed: ' + (err.code ? err.code.replace('auth/', '').replace(/-/g, ' ') : err.message);
+    }
+  });
+  $('#logoutBtn').addEventListener('click', () => signOut(auth));
+
+  let unsubProducts = null, unsubOrders = null;
+  onAuthStateChanged(auth, user => {
+    $('#loginView').hidden = !!user;
+    $('#appView').hidden = !user;
+    if (user) {
+      $('#whoami').textContent = user.email;
+      watchProducts(); watchOrders();
+    } else {
+      if (unsubProducts) unsubProducts();
+      if (unsubOrders) unsubOrders();
+    }
+  });
+
+  /* ---------- tabs ---------- */
+  document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('.tabs button').forEach(x => x.classList.toggle('on', x === b));
+    $('#tabProducts').hidden = b.dataset.tab !== 'products';
+    $('#tabOrders').hidden = b.dataset.tab !== 'orders';
+  }));
+
+  /* ---------- products ---------- */
+  const TIERS = ['Entry', 'Mid-range', 'High-end', 'Extreme'];
+  const TAGS = ['esports', 'aaa', 'streaming', 'compact', 'uhd'];
+  const FIELD_LABELS = {cpu:'CPU', gpu:'GPU', ram:'RAM', sto:'Storage', cool:'Cooling', mobo:'Motherboard', psu:'Power supply', pcase:'Case'};
+  let editingId = null;
+
+  function productFormHTML(p) {
+    p = p || {};
+    return `
+      <h2 style="margin-bottom:12px">${editingId ? 'Edit product' : 'Add product'}</h2>
+      <div class="grid2">
+        <div><label>ID (used in the link, can't change later)</label><input id="f-id" value="${esc(p.id || '')}" ${editingId ? 'disabled' : ''} placeholder="e.g. my-new-rig"></div>
+        <div><label>Name</label><input id="f-name" value="${esc(p.name || '')}"></div>
+        <div><label>Tier</label><select id="f-tier">${TIERS.map(t => `<option ${p.tier === t ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
+        <div><label>Price (₹)</label><input id="f-price" type="number" value="${p.price || ''}"></div>
+        <div><label>Performance score (0–100)</label><input id="f-perf" type="number" min="0" max="100" value="${p.perf || ''}"></div>
+        <div><label>Badge (optional)</label><input id="f-badge" value="${esc(p.badge || '')}"></div>
+        <div><label>CPU brand</label><select id="f-cpuB"><option ${p.cpuB === 'AMD' ? 'selected' : ''}>AMD</option><option ${p.cpuB === 'Intel' ? 'selected' : ''}>Intel</option></select></div>
+        <div><label>GPU brand</label><select id="f-gpuB"><option ${p.gpuB === 'NVIDIA' ? 'selected' : ''}>NVIDIA</option><option ${p.gpuB === 'AMD' ? 'selected' : ''}>AMD</option></select></div>
+      </div>
+      <label>Best for (one line)</label><input id="f-best" value="${esc(p.best || '')}">
+      <label>Tags</label>
+      <div class="tags">${TAGS.map(t => `<label><input type="checkbox" value="${t}" ${(p.tags || []).includes(t) ? 'checked' : ''}> ${t}</label>`).join('')}</div>
+      <div class="grid2">
+        ${Object.keys(FIELD_LABELS).map(f => `<div><label>${FIELD_LABELS[f]}</label><input id="f-${f}" value="${esc(p[f] || '')}"></div>`).join('')}
+      </div>
+      <div class="row" style="margin-top:14px">
+        <button class="btn" id="saveProductBtn" type="button">${editingId ? 'Save changes' : 'Add product'}</button>
+        <button class="btn ghost" id="cancelProductBtn" type="button">Cancel</button>
+      </div>
+      <p class="err" id="productErr"></p>`;
+  }
+
+  function openProductForm(p) {
+    editingId = p ? p.id : null;
+    const box = $('#productForm');
+    box.innerHTML = productFormHTML(p);
+    box.hidden = false;
+    box.scrollIntoView({behavior: 'smooth', block: 'start'});
+    $('#saveProductBtn').addEventListener('click', saveProduct);
+    $('#cancelProductBtn').addEventListener('click', () => { box.hidden = true; editingId = null; });
+  }
+  $('#newProductBtn').addEventListener('click', () => openProductForm(null));
+
+  async function saveProduct() {
+    const id = editingId || $('#f-id').value.trim().toLowerCase().replace(/[^a-z0-9-]+/g, '-').replace(/^-+|-+$/g, '');
+    if (!id) { $('#productErr').textContent = 'Enter an ID for this product.'; return; }
+    const data = {
+      name: $('#f-name').value.trim(), tier: $('#f-tier').value,
+      price: Number($('#f-price').value) || 0, perf: Number($('#f-perf').value) || 0,
+      badge: $('#f-badge').value.trim(), cpuB: $('#f-cpuB').value, gpuB: $('#f-gpuB').value,
+      best: $('#f-best').value.trim(),
+      tags: [...document.querySelectorAll('.tags input:checked')].map(i => i.value)
+    };
+    Object.keys(FIELD_LABELS).forEach(f => data[f] = $('#f-' + f).value.trim());
+    if (!data.name) { $('#productErr').textContent = 'Enter a product name.'; return; }
+    try {
+      await setDoc(doc(db, 'products', id), data);
+      $('#productForm').hidden = true; editingId = null;
+    } catch (e) { $('#productErr').textContent = 'Could not save — check you are signed in with the admin email set in Firestore rules. (' + e.message + ')'; }
+  }
+
+  function watchProducts() {
+    unsubProducts = onSnapshot(collection(db, 'products'), snap => {
+      const rows = [];
+      snap.forEach(d => rows.push({id: d.id, ...d.data()}));
+      $('#pCount').textContent = `(${rows.length} in database)`;
+      $('#productRows').innerHTML = rows.length ? rows.map(p => `
+        <tr><td>${esc(p.name)}</td><td>${esc(p.tier)}</td><td>${money(p.price)}</td>
+        <td class="row"><button class="btn ghost sm" data-edit="${p.id}" type="button">Edit</button><button class="btn danger sm" data-del="${p.id}" type="button">Delete</button></td></tr>
+      `).join('') : `<tr><td colspan="4" class="muted">No products added yet — the live site is still showing the 14 built-in demo rigs. Add your first product above whenever you're ready.</td></tr>`;
+      document.querySelectorAll('[data-edit]').forEach(b => b.addEventListener('click', () => openProductForm(rows.find(p => p.id === b.dataset.edit))));
+      document.querySelectorAll('[data-del]').forEach(b => b.addEventListener('click', async () => {
+        if (confirm('Delete this product? This cannot be undone.')) await deleteDoc(doc(db, 'products', b.dataset.del));
+      }));
+    }, err => { $('#productRows').innerHTML = `<tr><td colspan="4" class="err">Could not load products: ${esc(err.message)}</td></tr>`; });
+  }
+
+  /* ---------- orders ---------- */
+  const STATUSES = ['new', 'confirmed', 'shipped', 'delivered', 'cancelled'];
+  function watchOrders() {
+    unsubOrders = onSnapshot(query(collection(db, 'orders'), orderBy('createdAt', 'desc')), snap => {
+      const rows = [];
+      snap.forEach(d => rows.push({_id: d.id, ...d.data()}));
+      $('#oCount').textContent = `(${rows.length})`;
+      $('#orderList').innerHTML = rows.length ? rows.map(o => `
+        <div class="ocard">
+          <div class="row" style="justify-content:space-between">
+            <strong>${esc(o.orderId || o._id)}</strong>
+            <select data-order="${o._id}">${STATUSES.map(s => `<option ${o.status === s ? 'selected' : ''}>${s}</option>`).join('')}</select>
+          </div>
+          <div class="muted" style="margin:4px 0">${esc(o.customer && o.customer.name)} · ${esc(o.customer && o.customer.phone)} · ${o.customer && o.customer.mode === 'pickup' ? 'Pickup' : esc((o.customer && o.customer.city) || '')}</div>
+          <div class="muted" style="font-size:.85rem">${(o.items || []).map(i => `${esc(i.name)} ×${i.qty}`).join(', ')}</div>
+          <div style="margin-top:4px"><strong>${money(o.total)}</strong></div>
+        </div>`).join('') : `<p class="muted">No orders yet.</p>`;
+      document.querySelectorAll('[data-order]').forEach(sel => sel.addEventListener('change', () => updateDoc(doc(db, 'orders', sel.dataset.order), {status: sel.value})));
+    }, err => { $('#orderList').innerHTML = `<p class="err">Could not load orders: ${esc(err.message)}</p>`; });
+  }
+</script>
+</body>
+</html>
