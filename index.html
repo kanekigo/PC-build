@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Ignite Rigs | Gaming PCs, ordered on WhatsApp</title>
+<title>Pro Computers | Gaming PCs, ordered on WhatsApp</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -404,8 +404,8 @@ table.cmpt th .btn{margin-top:8px;padding:8px 12px;font-size:.88rem;font-family:
 <header class="top">
   <div class="wrap">
     <a class="brand" href="#top" aria-label="Home">
-      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="16" cy="16" r="13"/><path d="M16 16c0-6 3-9 7-9M16 16c5 3 5 8 2 12M16 16c-6-1-9 2-10 6" stroke-linecap="round"/></svg>
-      <span id="brandName">Ignite Rigs</span>
+      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="14" height="14" rx="2"/><rect x="13" y="13" width="6" height="6" rx="1"/><path d="M9 13H4M9 19H4M28 13h-5M28 19h-5M13 9V4M19 9V4M13 28v-5M19 28v-5"/></svg>
+      <span id="brandName">Pro Computers</span>
     </a>
     <nav class="nav" aria-label="Main">
       <a href="#shop">Shop rigs</a>
@@ -492,7 +492,7 @@ table.cmpt th .btn{margin-top:8px;padding:8px 12px;font-size:.88rem;font-family:
 
 <footer>
   <div class="wrap">
-    <div><strong id="footName">Ignite Rigs</strong><br>Orders are confirmed on WhatsApp.</div>
+    <div><strong id="footName">Pro Computers</strong><br>Orders are confirmed on WhatsApp.</div>
     <div>WhatsApp: <strong id="footWa"></strong></div>
     <div>&copy; <span id="year"></span></div>
   </div>
@@ -519,8 +519,8 @@ table.cmpt th .btn{margin-top:8px;padding:8px 12px;font-size:.88rem;font-family:
    STORE SETTINGS: change these to make the store yours
    ===================================================== */
 const CONFIG = {
-  storeName: 'Ignite Rigs',
-  whatsappNumber: '910000000000',   // country code + number, digits only (no + or spaces)
+  storeName: 'Pro Computers',
+  whatsappNumber: '919940338486',   // country code + number, digits only (no + or spaces)
   currency: '\u20B9',               // currency symbol
   locale: 'en-IN',                  // number formatting
   freeDeliveryAbove: 100000,        // free delivery threshold
@@ -596,19 +596,25 @@ const GAMES = [
 ];
 const RES = {'1080':{label:'1080p',f:1}, '1440':{label:'1440p',f:.68}, '2160':{label:'4K',f:.38}};
 
-const PRODUCTS = [
+let PRODUCTS = [
  {id:'rookie-r1',name:'Rookie R1',tier:'Entry',price:49999,perf:34,tags:['esports'],cpuB:'AMD',gpuB:'NVIDIA',badge:'Starter',
   best:'1080p esports, Fortnite and older AAA titles',cpu:'Ryzen 5 5500',gpu:'GeForce RTX 5050 8 GB',ram:'16 GB DDR4 3200',sto:'500 GB NVMe SSD',
   cool:'Tower air cooler',mobo:'B550, ATX',psu:'550 W 80+ Bronze',pcase:'Mesh-front mid tower'},
  {id:'scout-s5',name:'Scout S5',tier:'Entry',price:64999,perf:44,tags:['esports','aaa'],cpuB:'AMD',gpuB:'NVIDIA',badge:'',
   best:'High-refresh 1080p and modern AAA at medium settings',cpu:'Ryzen 5 7500F',gpu:'GeForce RTX 5060 8 GB',ram:'16 GB DDR5 5200',sto:'1 TB NVMe SSD',
   cool:'Dual-tower air cooler',mobo:'B650, ATX',psu:'650 W 80+ Bronze',pcase:'Mesh-front mid tower'},
+ {id:'cadet-c3',name:'Cadet C3',tier:'Entry',price:59999,perf:40,tags:['esports','aaa'],cpuB:'Intel',gpuB:'NVIDIA',badge:'',
+  best:'Solid 1080p esports and light AAA on an Intel and NVIDIA pairing',cpu:'Core i5-12400F',gpu:'GeForce RTX 5050 8 GB',ram:'16 GB DDR4 3200',sto:'500 GB NVMe SSD',
+  cool:'Tower air cooler',mobo:'B660, ATX',psu:'550 W 80+ Bronze',pcase:'Mesh-front mid tower'},
  {id:'vanguard-v5',name:'Vanguard V5',tier:'Mid-range',price:84999,perf:54,tags:['esports','aaa'],cpuB:'Intel',gpuB:'AMD',badge:'',
   best:'1080p at max settings and 1440p in most games',cpu:'Core i5-14400F',gpu:'Radeon RX 9060 XT 16 GB',ram:'32 GB DDR5 5600',sto:'1 TB NVMe Gen4',
   cool:'Dual-tower air cooler',mobo:'B760, ATX',psu:'650 W 80+ Gold',pcase:'Airflow mid tower'},
  {id:'striker-x6',name:'Striker X6',tier:'Mid-range',price:94999,perf:58,tags:['esports','aaa','streaming'],cpuB:'AMD',gpuB:'NVIDIA',badge:'',
   best:'Smooth 1440p gaming with room to stream',cpu:'Ryzen 5 9600X',gpu:'GeForce RTX 5060 Ti 16 GB',ram:'32 GB DDR5 6000',sto:'1 TB NVMe Gen4',
   cool:'240 mm liquid cooler',mobo:'B650, ATX',psu:'750 W 80+ Gold',pcase:'Glass mid tower'},
+ {id:'nova-n4',name:'Nova N4',tier:'Mid-range',price:99999,perf:60,tags:['aaa','compact','streaming'],cpuB:'Intel',gpuB:'NVIDIA',badge:'Compact',
+  best:'Compact 1440p rig with room to stream',cpu:'Core i5-14600KF',gpu:'GeForce RTX 5060 Ti 16 GB',ram:'32 GB DDR5 5600',sto:'1 TB NVMe Gen4',
+  cool:'240 mm liquid cooler',mobo:'B760I, Mini-ITX',psu:'650 W SFX 80+ Gold',pcase:'Small-form-factor with handle'},
  {id:'phantom-p7',name:'Phantom P7',tier:'High-end',price:119999,perf:68,tags:['aaa','streaming'],cpuB:'AMD',gpuB:'NVIDIA',badge:'',
   best:'High-refresh 1440p in demanding games',cpu:'Ryzen 7 7700',gpu:'GeForce RTX 5070 12 GB',ram:'32 GB DDR5 6000',sto:'1 TB NVMe Gen4',
   cool:'240 mm liquid cooler',mobo:'B650, ATX',psu:'750 W 80+ Gold',pcase:'Dual-chamber glass tower'},
@@ -634,19 +640,21 @@ const PRODUCTS = [
   best:'No compromises. 4K at max settings and everything else',cpu:'Ryzen 9 9950X3D',gpu:'GeForce RTX 5090 32 GB',ram:'64 GB DDR5 6400',sto:'4 TB NVMe Gen4 (2 x 2 TB)',
   cool:'420 mm liquid cooler',mobo:'X870E, ATX',psu:'1200 W 80+ Platinum',pcase:'Panoramic glass tower'}
 ];
-const MAXP = Math.ceil(Math.max(...PRODUCTS.map(p=>p.price))/5000)*5000;
+let MAXP = Math.ceil(Math.max(...PRODUCTS.map(p=>p.price))/5000)*5000;
 const MINP = 40000;
 const byId = id => PRODUCTS.find(p => p.id === id);
 const glowOf = id => GLOWS.find(g => g.id === id) || GLOWS[0];
 
 /* ---------- deal of the day ---------- */
-const DEAL = (function(){
+function pickDeal(){
   const pool = PRODUCTS.filter(p => p.tier !== 'Entry');
+  const list = pool.length ? pool : PRODUCTS;
   const d = new Date();
   const day = Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5);
-  return {p: pool[day % pool.length], pct: 7};
-})();
-const priceOf = p => p.id === DEAL.p.id ? Math.round(p.price * (1 - DEAL.pct/100) / 100) * 100 - 1 : p.price;
+  return {p: list[day % list.length], pct: 7};
+}
+let DEAL = pickDeal();
+const priceOf = p => DEAL.p && p.id === DEAL.p.id ? Math.round(p.price * (1 - DEAL.pct/100) / 100) * 100 - 1 : p.price;
 
 /* ---------- state ---------- */
 const S = {
@@ -911,7 +919,8 @@ function renderCompareBar(){
 /* ---------- deal, hero, usp ---------- */
 const waLink = text => `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(text)}`;
 function renderStatic(){
-  $('#heroStage').innerHTML = pcSVG(byId('titan-t80'), true);
+  const heroP = PRODUCTS.reduce((a,b) => (b.perf > a.perf ? b : a), PRODUCTS[0]);
+  $('#heroStage').innerHTML = pcSVG(heroP, true);
   $('#usp').innerHTML = [
     ['chat','Order on WhatsApp','No checkout page and no card details on this site.'],
     ['bolt','Burn-in tested','Every rig runs a 48-hour stress test before it ships.'],
@@ -1209,10 +1218,17 @@ function submitOrder(form){
   });
   const first = Object.keys(errs)[0];
   if (first){ $('#f-'+first).focus(); return; }
-  const id = orderId(), msg = buildMessage(c, id), url = waLink(msg);
+  const id = orderId(), msg = buildMessage(c, id), url = waLink(msg), ord = totals();
   store.set('cust', {name:c.name, phone:c.phone, email:c.email, address:c.address, city:c.city, pin:c.pin});
   S.last = {id, msg, url};
   window.open(url, '_blank', 'noopener');
+  if (window.saveOrderToFirestore){
+    window.saveOrderToFirestore({
+      orderId: id, customer: c,
+      items: S.cart.map(it => ({productId:it.id, name:byId(it.id).name, qty:it.qty, mem:it.mem, sto:it.sto, addons:it.addons, glow:it.glow, unitPrice:itemUnit(it), lineTotal:itemUnit(it)*it.qty})),
+      subtotal: ord.sub, discount: ord.disc, coupon: S.coupon || null, total: ord.total
+    });
+  }
   S.cart = []; S.coupon = null; S.couponMsg = ''; saveCart(); renderBadges();
   renderDone();
 }
@@ -1344,7 +1360,57 @@ renderFilters();
 renderGrid();
 renderCompareBar();
 tickClock(); setInterval(tickClock, 1000);
+
+/* Lets the Firebase module script (below) swap in admin-managed products once loaded. */
+window.IgniteStore = {
+  setProducts(list){
+    if (!Array.isArray(list) || !list.length) return;
+    PRODUCTS = list.map(p => ({tags:[], ...p, price:Number(p.price)||0, perf:Number(p.perf)||0}));
+    MAXP = Math.ceil(Math.max(...PRODUCTS.map(p=>p.price))/5000)*5000;
+    DEAL = pickDeal();
+    S.f.max = MAXP;
+    renderStatic(); renderFilters(); renderGrid();
+  }
+};
 })();
+</script>
+
+<!-- Connects this page to your Firebase project: loads admin-managed products if any exist, and saves a copy of each order placed. -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCDJ4yy3oeTnnMOybqm3eBSDchCgaX6xm8",
+    authDomain: "pro-computers-store.firebaseapp.com",
+    projectId: "pro-computers-store",
+    storageBucket: "pro-computers-store.firebasestorage.app",
+    messagingSenderId: "861952923258",
+    appId: "1:861952923258:web:adaa96b3ffef6b64228dc3"
+  };
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  (async () => {
+    try {
+      const snap = await getDocs(collection(db, 'products'));
+      if (!snap.empty){
+        const list = [];
+        snap.forEach(d => list.push({id: d.id, ...d.data()}));
+        window.IgniteStore && window.IgniteStore.setProducts(list);
+      }
+    } catch (e) {
+      console.warn('Showing the built-in demo rigs (database not reachable or empty yet):', e.message);
+    }
+  })();
+
+  window.saveOrderToFirestore = async (orderDoc) => {
+    try {
+      await addDoc(collection(db, 'orders'), {...orderDoc, status: 'new', createdAt: serverTimestamp()});
+    } catch (e) {
+      console.warn('Order reached WhatsApp, but was not saved to the database:', e.message);
+    }
+  };
 </script>
 </body>
 </html>
